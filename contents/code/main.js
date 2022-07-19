@@ -9,13 +9,10 @@ function getPosition(workspace, client, xOffset, width) {
         maxArea.height,
     ];
 
-    console.log('getPosition', position);
-
     return position;
 }
 
-function setSlot(workspace, slot) {
-    var client = workspace.activeClient;
+function setSlot(workspace, client, slot) {    
     if (client.moveable && client.resizeable) {
 
         client.setMaximize(false, false);
@@ -54,17 +51,69 @@ function setSlot(workspace, slot) {
 }
 
 registerShortcut("MoveWindowToDownLeft2x2", "UltrawideWindows: Set window slot 1", "ctrl+Num+1", function () {
-    setSlot(workspace, 1);
+    setSlot(workspace, workspace.activeClient, 1);
 });
 
 registerShortcut("MoveWindowToDownCenter2x2", "UltrawideWindows: Set window slot 2", "ctrl+Num+2", function () {
-    setSlot(workspace, 2);
+    setSlot(workspace, workspace.activeClient, 2);
 });
 
 registerShortcut("MoveWindowToDownRight2x2", "UltrawideWindows: Set window slot 3", "ctrl+Num+3", function () {
-    setSlot(workspace, 3);
+    setSlot(workspace, workspace.activeClient, 3);
 });
 
 registerShortcut("MoveWindowToLeftHeight2x2", "UltrawideWindows: Set window slot 4", "ctrl+Num+4", function () {
-    setSlot(workspace, 4);
+    setSlot(workspace, workspace.activeClient, 4);
+});
+
+registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right screen", "ctrl+Num+5", function () {
+    const autoSlotMap = {
+        'discord': 1,
+        'deluge': 3,
+        'gitkraken': 2,
+        'dolphin': 2,
+        'Google Chrome': 2,
+        'konsole': 2,
+        'system settings': 2,
+        'visual studio code': 4,
+    };
+
+    const getAutoSlot = (client) => {
+        const entry = Object.entries(autoSlotMap).find((x) => (client.caption || '').toLowerCase().endsWith(x[0].toLowerCase()));
+
+        if (entry) {
+        
+            console.log('Found slot for: ' + client.caption, entry[1]);
+            return entry[1];
+        }
+
+        console.log('No slot for: ' + client.caption);
+        return 0;
+    };
+
+    var allClients = workspace.clientList();
+
+    for (var i = 0; i < allClients.length; i += 1) {
+
+        var client = allClients[i];
+
+        if (Object.keys(autoSlotMap).find((x) => (client.caption || '').toLowerCase().endsWith(x.toLowerCase()))) {
+
+            const isDedicatedYoutubeWindow = ((client.caption || '').toLowerCase().includes('youtube') && (client.caption || '').toLowerCase().includes('google chrome'));
+
+            if (isDedicatedYoutubeWindow) {
+                workspace.sendClientToScreen(client, 1);
+                client.setMaximize(true,true)
+                
+            } else {
+                workspace.sendClientToScreen(client, 0);
+
+                const slot = getAutoSlot(client);
+
+                if (slot) {
+                    setSlot(workspace, client, slot);
+                }
+            }
+        }
+    }
 });
