@@ -67,52 +67,71 @@ registerShortcut("MoveWindowToLeftHeight2x2", "UltrawideWindows: Set window slot
 });
 
 registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right screen", "ctrl+Num+5", function () {
-    const autoSlotMap = {
-        'discord': 1,
-        'deluge': 3,
-        'gitkraken': 2,
-        'dolphin': 2,
-        'Google Chrome': 2,
-        'konsole': 2,
-        'system settings': 2,
-        'visual studio code': 4,
-    };
 
-    const getAutoSlot = (client) => {
-        const entry = Object.entries(autoSlotMap).find((x) => (client.caption || '').toLowerCase().endsWith(x[0].toLowerCase()));
-
-        if (entry) {
-        
-            console.log('Found slot for: ' + client.caption, entry[1]);
-            return entry[1];
+    const layoutSlots = [
+        {
+            match: (cl) => (cl.resourceClass || '').toString() === 'mpv' || ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().endsWith(' - YouTube - Google Chrome')),
+            slot: 'special-0',
+        },
+        {
+            match: (cl) => ['discord'].includes((cl.resourceClass || '').toString()),
+            slot: 1,
+        },
+        {
+            match: (cl) => [
+                'konsole',
+                'google-chrome',
+                'gitkraken',
+                'dolphin',
+                'wine',
+                'discover',
+                'systemsettings',
+                'virt-manager',
+                'org.remmina.remmina'
+            ].includes((cl.resourceClass || '').toString()),
+            slot: 2,
+        },
+        {
+            match: (cl) => ['deluge-gtk'].includes((cl.resourceClass || '').toString()),
+            slot: 3,
+        },
+        {
+            match: (cl) => [
+                'code',
+                'jetbrains-webstorm',
+                'jetbrains-rider',
+                'jetbrains-clion',
+                'jetbrains-datagrip'
+            ].includes((cl.resourceClass || '').toString()),
+            slot: 4,
+        },
+        {
+            match: () => true,
+            slot: 2,
         }
-
-        console.log('No slot for: ' + client.caption);
-        return 0;
-    };
+    ];
 
     var allClients = workspace.clientList();
 
-    for (var i = 0; i < allClients.length; i += 1) {
+    for (const client of allClients) {
 
-        var client = allClients[i];
+        // Skip all the plasma stuff
+        if (client.resourceClass == 'plasmashell') {
+            continue;
+        }
 
-        if (Object.keys(autoSlotMap).find((x) => (client.caption || '').toLowerCase().endsWith(x.toLowerCase()))) {
+        for (const layoutSlot of layoutSlots) {
+            if (layoutSlot.match(client)) {
 
-            const isDedicatedYoutubeWindow = ((client.caption || '').toLowerCase().includes('youtube') && (client.caption || '').toLowerCase().includes('google chrome'));
-
-            if (isDedicatedYoutubeWindow) {
-                workspace.sendClientToScreen(client, 1);
-                client.setMaximize(true,true)
-                
-            } else {
-                workspace.sendClientToScreen(client, 0);
-
-                const slot = getAutoSlot(client);
-
-                if (slot) {
-                    setSlot(workspace, client, slot);
+                if (layoutSlot.slot === 'special-0') {
+                    workspace.sendClientToScreen(client, 1);
+                    client.setMaximize(true,true)
+                } else {
+                    workspace.sendClientToScreen(client, 0);
+                    setSlot(workspace, client, layoutSlot.slot);
                 }
+
+                break;
             }
         }
     }
