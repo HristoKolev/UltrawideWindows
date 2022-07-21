@@ -125,7 +125,7 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
 
                 if (layoutSlot.slot === 'special-0') {
                     workspace.sendClientToScreen(client, 1);
-                    client.setMaximize(true,true)
+                    client.setMaximize(true,true);
                 } else {
                     workspace.sendClientToScreen(client, 0);
                     setSlot(workspace, client, layoutSlot.slot);
