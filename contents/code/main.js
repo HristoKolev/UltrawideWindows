@@ -75,7 +75,8 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
             slot: 'special-0',
         },
         {
-            match: (cl) => ['discord'].includes((cl.resourceClass || '').toString()),
+            match: (cl) => ['discord'].includes((cl.resourceClass || '').toString()) ||
+                ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().startsWith('DevTools - ')),
             slot: 1,
         },
         {
