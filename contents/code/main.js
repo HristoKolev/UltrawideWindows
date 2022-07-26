@@ -23,6 +23,10 @@ function setSlot(workspace, client, slot) {
     const slot2Width = 1818;
     const slot3Width = 1023;
 
+    const slot4Offset = 750;
+
+    const slot4Width = workspace.clientArea(KWin.MaximizeArea, client).width - slot4Offset;
+
     const position = (function () {
         switch (slot) {
             case 1: {
@@ -35,7 +39,7 @@ function setSlot(workspace, client, slot) {
                 return getPosition(workspace, client, slot1Width + slot2Width, slot3Width);
             }
             case 4: {
-                return getPosition(workspace, client, slot1Width, slot2Width + slot3Width);
+                return getPosition(workspace, client, slot4Offset, slot4Width);
             }
             default: {
                 throw new Error('Unknown slot: ' + slot);
@@ -103,7 +107,8 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
                 'jetbrains-webstorm',
                 'jetbrains-rider',
                 'jetbrains-clion',
-                'jetbrains-datagrip'
+                'jetbrains-datagrip',
+                'jetbrains-rubymine'
             ].includes((cl.resourceClass || '').toString()),
             slot: 4,
         },
