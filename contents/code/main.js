@@ -23,10 +23,6 @@ function setSlot(workspace, client, slot) {
     const slot2Width = 1818;
     const slot3Width = 1023;
 
-    const slot4Offset = 750;
-
-    const slot4Width = workspace.clientArea(KWin.MaximizeArea, client).width - slot4Offset;
-
     const position = (function () {
         switch (slot) {
             case 1: {
@@ -39,7 +35,7 @@ function setSlot(workspace, client, slot) {
                 return getPosition(workspace, client, slot1Width + slot2Width, slot3Width);
             }
             case 4: {
-                return getPosition(workspace, client, slot4Offset, slot4Width);
+                return getPosition(workspace, client, slot1Width, slot2Width + slot3Width);
             }
             default: {
                 throw new Error('Unknown slot: ' + slot);
@@ -73,14 +69,54 @@ registerShortcut("MoveWindowToLeftHeight2x2", "UltrawideWindows: Set window slot
 
 registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right screen", "ctrl+Num+5", function () {
 
+    const jetbrainsIdes = [
+        'jetbrains-webstorm',
+        'jetbrains-rider',
+        'jetbrains-clion',
+        'jetbrains-datagrip',
+        'jetbrains-rubymine',
+    ];
+
     const layoutSlots = [
         {
-            match: (cl) => (cl.resourceClass || '').toString() === 'mpv' || ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().endsWith(' - YouTube - Google Chrome')),
+            match: (cl) => {
+
+                // Video player
+                if ((cl.resourceClass || '').toString() === 'mpv') {
+                    return true;
+                }
+
+                // YouTube Chrome window
+                if ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().endsWith(' - YouTube - Google Chrome')) {
+                    return true;
+                }
+
+                return false;
+            },
             slot: 'special-0',
         },
         {
-            match: (cl) => ['discord'].includes((cl.resourceClass || '').toString()) ||
-                ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().startsWith('DevTools - ')),
+            match: (cl) => {
+
+                // Discord
+                if (['discord'].includes((cl.resourceClass || '').toString())) {
+                    return true;
+                }
+
+                // Chrome DevTools
+                if ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().startsWith('DevTools - ')) {
+                    return true;
+                }
+
+                // JetBrains Run/Cover windows
+                if (jetbrainsIdes.includes((cl.resourceClass || '').toString()) && (
+                    (cl.caption || '').toString().startsWith('Run - ') || (cl.caption || '').toString().startsWith('Cover - ')
+                )) {
+                    return true;
+                }
+
+                return false;
+            },
             slot: 1,
         },
         {
@@ -102,14 +138,7 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
             slot: 3,
         },
         {
-            match: (cl) => [
-                'code',
-                'jetbrains-webstorm',
-                'jetbrains-rider',
-                'jetbrains-clion',
-                'jetbrains-datagrip',
-                'jetbrains-rubymine'
-            ].includes((cl.resourceClass || '').toString()),
+            match: (cl) => [ 'code', ...jetbrainsIdes ].includes((cl.resourceClass || '').toString()),
             slot: 4,
         },
         {
