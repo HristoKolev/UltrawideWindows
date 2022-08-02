@@ -81,13 +81,18 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
         {
             match: (cl) => {
 
-                // Video player
-                if ((cl.resourceClass || '').toString() === 'mpv') {
+                // Video players
+                if (['mpv'].includes((cl.resourceClass || '').toString())) {
                     return true;
                 }
 
                 // YouTube Chrome window
                 if ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().endsWith(' - YouTube - Google Chrome')) {
+                    return true;
+                }
+
+                // YouTube Firefox window
+                if ((cl.resourceClass || '').toString() === 'firefox' && (cl.caption || '').toString().endsWith(' - YouTube — Mozilla Firefox')) {
                     return true;
                 }
 
@@ -155,6 +160,8 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
         if (client.resourceClass == 'plasmashell') {
             continue;
         }
+
+        console.log('CLIENT => resourceClass:', client.resourceClass.toString(), '| caption:', (client.caption || '').toString());
 
         for (const layoutSlot of layoutSlots) {
             if (layoutSlot.match(client)) {
