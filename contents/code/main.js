@@ -79,20 +79,20 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
 
     const layoutSlots = [
         {
-            match: (cl) => {
+            match: (client) => {
 
                 // Video players
-                if (['mpv'].includes((cl.resourceClass || '').toString())) {
+                if (['mpv'].includes((client.resourceClass || '').toString())) {
                     return true;
                 }
 
                 // YouTube Chrome window
-                if ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().endsWith(' - YouTube - Google Chrome')) {
+                if ((client.resourceClass || '').toString() === 'google-chrome' && (client.caption || '').toString().endsWith(' - YouTube - Google Chrome')) {
                     return true;
                 }
 
                 // YouTube Firefox window
-                if ((cl.resourceClass || '').toString() === 'firefox' && (cl.caption || '').toString().endsWith(' - YouTube — Mozilla Firefox')) {
+                if ((client.resourceClass || '').toString() === 'firefox' && (client.caption || '').toString().endsWith(' - YouTube — Mozilla Firefox')) {
                     return true;
                 }
 
@@ -101,21 +101,21 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
             slot: 'special-0',
         },
         {
-            match: (cl) => {
+            match: (client) => {
 
                 // Discord
-                if (['discord'].includes((cl.resourceClass || '').toString())) {
+                if (['discord'].includes((client.resourceClass || '').toString())) {
                     return true;
                 }
 
                 // Chrome DevTools
-                if ((cl.resourceClass || '').toString() === 'google-chrome' && (cl.caption || '').toString().startsWith('DevTools - ')) {
+                if ((client.resourceClass || '').toString() === 'google-chrome' && (client.caption || '').toString().startsWith('DevTools - ')) {
                     return true;
                 }
 
                 // JetBrains Run/Cover windows
-                if (jetbrainsIdes.includes((cl.resourceClass || '').toString()) && (
-                    (cl.caption || '').toString().startsWith('Run - ') || (cl.caption || '').toString().startsWith('Cover - ')
+                if (jetbrainsIdes.includes((client.resourceClass || '').toString()) && (
+                    (client.caption || '').toString().startsWith('Run - ') || (client.caption || '').toString().startsWith('Cover - ') || (client.caption || '').toString().startsWith('Debug - ')
                 )) {
                     return true;
                 }
@@ -125,7 +125,7 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
             slot: 1,
         },
         {
-            match: (cl) => [
+            match: (client) => [
                 'konsole',
                 'google-chrome',
                 'gitkraken',
@@ -135,15 +135,15 @@ registerShortcut("MoveWindowToUpCenter2x2", "UltrawideWindows: Move Window right
                 'systemsettings',
                 'virt-manager',
                 'org.remmina.remmina'
-            ].includes((cl.resourceClass || '').toString()),
+            ].includes((client.resourceClass || '').toString()),
             slot: 2,
         },
         {
-            match: (cl) => ['deluge-gtk'].includes((cl.resourceClass || '').toString()),
+            match: (client) => ['deluge-gtk'].includes((client.resourceClass || '').toString()),
             slot: 3,
         },
         {
-            match: (cl) => [ 'code', ...jetbrainsIdes ].includes((cl.resourceClass || '').toString()),
+            match: (client) => [ 'code', ...jetbrainsIdes ].includes((client.resourceClass || '').toString()),
             slot: 4,
         },
         {
